@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noot Noot</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css" />
+    <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+</head>
+<body>
+    
+    <script type="py">
+from js import document, window
+from pyodide.ffi import create_proxy
+
+# =========================
+# EDIT YOUR CONTENT HERE
+# =========================
+
+question_text = "Should I stop trying to get a Pingu plushie for Gaux?"
+yes_text = "YES"
+no_text = "NO"
+
+yes_message = "YAY NO MORE PINGU PLUSHIE FOR GAUX"
+are_you_sure = "Are you sure?"
+broken_message = "Oh No! You broke the button :c"
+
+
+# =========================
+# PAGE DESIGN
+# =========================
+
+document.body.style.fontFamily = "Arial, sans-serif"
+document.body.style.display = "flex"
+document.body.style.justifyContent = "center"
+document.body.style.alignItems = "center"
+document.body.style.height = "100vh"
+document.body.style.margin = "0"
+document.body.style.backgroundColor = "#FAEEE6"
+document.body.style.overflow = "hidden"
+
+content = document.createElement("div")
+content.style.backgroundColor = "#FFC0CB"
+content.style.borderRadius = "12px"
+content.style.boxShadow = "0 8px 16px rgba(0,0,0,0.2)"
+content.style.padding = "30px"
+content.style.textAlign = "center"
+content.style.zIndex = "10"
+
+question = document.createElement("h2")
+question.innerText = question_text
+
+yes_button = document.createElement("button")
+yes_button.innerText = yes_text
+
+no_button = document.createElement("button")
+no_button.innerText = no_text
+
+message = document.createElement("p")
+
+for button in [yes_button, no_button]:
+    button.style.fontSize = "20px"
+    button.style.borderRadius = "12px"
+    button.style.boxShadow = "0 8px 16px rgba(0,0,0,0.2)"
+    button.style.padding = "15px 25px"
+    button.style.border = "none"
+    button.style.cursor = "pointer"
+    button.style.margin = "10px"
+
+yes_button.style.backgroundColor = "#4CAF50"
+yes_button.style.color = "white"
+
+no_button.style.backgroundColor = "#f44336"
+no_button.style.color = "white"
+
+content.appendChild(question)
+content.appendChild(yes_button)
+content.appendChild(no_button)
+content.appendChild(message)
+document.body.appendChild(content)
+
+
+# =========================
+# NO BUTTON
+# =========================
+
+no_click_count = 0
+
+
+def no_clicked(event):
+    global no_click_count
+
+    no_click_count += 1
+
+    if no_click_count == 1:
+        yes_button.style.fontSize = "30px"
+
+    elif no_click_count == 2:
+        no_button.style.fontSize = "10px"
+        yes_button.style.fontSize = "40px"
+
+    elif no_click_count == 3:
+        yes_button.style.fontSize = "90px"
+        no_button.style.fontSize = "7px"
+
+    elif no_click_count >= 4 and no_click_count < 10:
+        no_button.style.position = "absolute"
+        no_button.style.left = (
+            str(window.innerWidth - no_button.offsetWidth)
+        )
+        no_button.style.left = str(
+            window.Math.random() *
+            (window.innerWidth - no_button.offsetWidth)
+        ) + "px"
+        no_button.style.top = str(
+            window.Math.random() *
+            (window.innerHeight - no_button.offsetHeight)
+        ) + "px"
+
+    elif no_click_count >= 10 and no_click_count < 15:
+        no_button.style.position = "absolute"
+
+        no_button.style.left = str(
+            window.Math.random() *
+            (window.innerWidth - no_button.offsetWidth)
+        ) + "px"
+
+        no_button.style.top = str(
+            window.Math.random() *
+            (window.innerHeight - no_button.offsetHeight)
+        ) + "px"
+
+        message.innerText = are_you_sure
+
+        message.style.position = "absolute"
+        message.style.left = no_button.style.left
+        message.style.top = str(
+            float(no_button.style.top.replace("px", "")) + 50
+        ) + "px"
+
+    elif no_click_count == 15:
+        message.innerText = broken_message
+        no_button.disabled = True
+        no_button.style.backgroundColor = "#ddd"
+        no_button.style.color = "grey"
+
+
+no_button.addEventListener("click", create_proxy(no_clicked))
+
+
+# =========================
+# YES BUTTON
+# =========================
+
+def yes_clicked(event):
+    question.innerText = yes_message
+
+    yes_button.style.display = "none"
+    no_button.style.display = "none"
+
+    for i in range(100):
+        heart = document.createElement("div")
+
+        heart.innerText = "♥"
+        heart.style.position = "fixed"
+        heart.style.top = "-50px"
+        heart.style.left = str(
+            window.Math.random() * window.innerWidth
+        ) + "px"
+
+        heart.style.fontSize = str(
+            20 + window.Math.random() * 50
+        ) + "px"
+
+        heart.style.color = "#FF0000"
+        heart.style.zIndex = "1"
+        heart.style.pointerEvents = "none"
+
+        duration = 3 + window.Math.random() * 2
+        delay = window.Math.random() * 2
+
+        heart.style.animation = (
+            "fall " + str(duration) + "s linear " +
+            str(delay) + "s"
+        )
+
+        document.body.appendChild(heart)
+
+
+yes_button.addEventListener("click", create_proxy(yes_clicked))
+
+
+# =========================
+# HEART ANIMATION
+# =========================
+
+style = document.createElement("style")
+
+style.innerHTML = """
+@keyframes fall {
+    0% {
+        transform: translateY(-100vh);
+    }
+    100% {
+        transform: translateY(110vh);
+    }
+}
+"""
+
+document.head.appendChild(style)
+    </script>
+
+</body>
+</html>
